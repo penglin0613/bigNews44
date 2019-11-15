@@ -52,4 +52,41 @@
         </div>
     </div>
 
+    <!-- 文章类别模板 -->
+    <script id="art_cate_temp" type="text/html">
+       {{each data v}}
+       <tr>
+            <td>{{v.name}}</td>
+            <td>{{v.slug}}</td>
+            <td class="text-center">
+                <a href="javascript:void(0)" data-id={{v.id}} data-toggle="modal" class=" btn btn-info btn-xs">编辑</a>
+                <a href="javascript:void(0)" data-id={{v.id}} class="btn btn-danger btn-xs">删除</a>
+            </td>
+        </tr>
+       {{/each}} 
+    </script>
+
+    <script src="./libs/http.js"></script>
+    <script>
+        //入口函数
+        $(function(){
+            //一: 一进到文章类别页面,就显示所有的文章类别
+            //1.发送ajax请求
+            $.ajax({
+                type:'get',
+                url:BigNew.category_list,
+                success:function(backData){
+                    //console.log(backData);
+                    if(backData.code == 200){
+                        //模板引擎渲染
+                        var resHtml = template('art_cate_temp',backData);
+                        $('tbody').html(resHtml);
+                    }
+                }
+            });
+            //2.获取到所有的文章类别信息后,通过模板引擎渲染到页面上
+
+        });
+    </script>
+</body>
 </html>
