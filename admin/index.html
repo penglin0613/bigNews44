@@ -97,6 +97,30 @@
             })
 
 
+            //三: 首页左侧一级菜单设置点击事件
+            $('div.level01').on('click',function(){
+                //当前点击的设置一个active类,其他的兄弟移除active类. 
+                $(this).addClass('active').siblings('div').removeClass('active');
+                //如果你点击的是文章管理. 
+                if($(this).index() == 1){
+                    $('ul.level02').slideToggle();//二级菜单显示就隐藏,隐藏就显示
+
+                    
+                    //默认选中第一个二级菜单. 
+                    $('ul.level02>li:eq(0)>a')[0].click();
+                    //jQuery对象的click()事件,他只会触发js单击事件,而不会触发a标签的默认跳转事件. 
+                    //dom对象的click()事件,他不仅会触发js单击事件,还会触发a标签的默认跳转事件
+
+                }
+            })
+
+            //四:首页左侧二级菜单设置点击事件
+            $('ul.level02>li').on('click',function(){
+                //当前点击的添加active类,其他的兄弟移除active类
+                $(this).addClass('active').siblings('li').removeClass('active');
+            })
+
+
 
         })
     </script>
