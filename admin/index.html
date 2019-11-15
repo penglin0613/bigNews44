@@ -105,7 +105,9 @@
                 if($(this).index() == 1){
                     $('ul.level02').slideToggle();//二级菜单显示就隐藏,隐藏就显示
 
-                    
+                    //设置小剑尖的旋转(其实就是设置有咩有rotate0类- 本质是c3的旋转动画)
+                    $(this).find('b').toggleClass('rotate0');
+
                     //默认选中第一个二级菜单. 
                     $('ul.level02>li:eq(0)>a')[0].click();
                     //jQuery对象的click()事件,他只会触发js单击事件,而不会触发a标签的默认跳转事件. 
