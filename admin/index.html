@@ -20,7 +20,7 @@
         <a href="#" class="logo"><img src="images/logo02.png" alt="logo"></a>
         <div class="user_info">
             <img src="images/2.jpg" alt="person">
-            <span>欢迎&nbsp;&nbsp;李思思</span>
+            <span>欢迎&nbsp;&nbsp;<i style="font-style: normal;">李思思</i></span>
             <b>管理员</b>
         </div>
         <!-- 左侧导航栏 -->
@@ -54,5 +54,51 @@
 
         </div>
     </div>
+
+    <script src="./libs/http.js"></script>
+    <script>
+        //入口函数
+        $(function(){
+            //一:发送ajax请求,获取网站管理员用户的个人信息
+            $.ajax({
+                url:window.BigNew.user_info,
+                //设置请求头,把token令牌带过去
+                // headers:{
+                //     Authorization:window.localStorage.getItem('token')
+                // },
+                success:function(backData){
+                    //console.log(backData);
+                    if(backData.code == 200){
+                        $('.user_info>span>i').text(backData.data.nickname);
+                        $('.user_info>img').attr('src',backData.data.userPic);
+                        $('.user_center_link>img').attr('src',backData.data.userPic);
+                    }
+                }
+            });
+
+
+            //原生js发送ajax请求访问个人信息,把token带过去. 
+            // var xhr = new XMLHttpRequest();
+            // xhr.open('get','http://localhost:8080/api/v1/admin/user/info');
+            // //设置一个请求头
+            // xhr.setRequestHeader('Authorization',window.localStorage.getItem('token'));
+            // xhr.onload = function(){
+            //     console.log(xhr.response);
+            // }
+            // xhr.send();
+
+
+            //二:登出
+            //1.给登出按钮设置一个点击事件
+            $('.logout').on('click',function(){
+                //2.删除token,跳转到登录页面
+                window.localStorage.removeItem('token');
+                window.location.href = './login.html';
+            })
+
+
+
+        })
+    </script>
 </body>
 </html>
