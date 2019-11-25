@@ -223,10 +223,160 @@
         <p>电话：0755-****888 粤ICP备*******8号</p>
     </div>
 
+    <!-- 一:热点图模板 -->
+    <script id="hotpic_temp" type="text/html">
+        {{each data v}}
+        {{if $index == 0}}
+        <li class="first">
+            {{else}}
+        <li>
+            {{/if}}
+            <a href="./article.html?id={{v.id}}"><img src="{{v.cover}}" alt=""></a>
+            <p>{{v.title}}</p>
+        </li>
+        {{/each}}
+    </script>
+
+    <!-- 二:最新资讯模板 -->
+    <script id="latest_temp" type="text/html">
+        {{each data v}}
+        <div class="common_news_list">
+            <a href="./article.html?id={{v.id}}" class="list_pic"><img src="{{v.cover}}" alt=""></a>
+            <h4><a href="./article.html?id={{v.id}}">{{v.title}}</a></h4>
+            <p>{{@ v.intro}}
+            </p>
+            <div class="new_info">
+                <span>标签：{{v.category}}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<i class="fa fa-eye"></i>&nbsp;阅读(
+                    {{v.read}}
+                    )&nbsp;&nbsp;&nbsp;<i class="fa fa-commenting"></i>&nbsp;评论( {{v.comments}} )</span>
+                <b>发布于 {{v.date}}</b>
+            </div>
+        </div>
+        {{/each}}
+    </script>
+
+
+    <!-- 四:最新评论模板 -->
+    <script id="latestcomment_temp" type="text/html">
+        {{each data v}}
+        <li>
+            <span>{{v.author.substr(0,1)}}</span>
+            <b><em>{{v.author}}</em> {{v.date}}说:</b>
+            <strong>{{v.intro}}</strong>
+        </li>
+        {{/each}}
+    </script>
+
+    <!-- 五:焦点关注模板 -->
+    <script id="attention_temp" type="text/html">
+        {{each data v}}
+        <li><a href="./article.html?id={{v.id}}">{{v.intro}}</a></li>
+        {{/each}}
+    </script>
+
+
+    <!-- 六:所有的文章类别模板 -->
+    <script id="category_temp" type="text/html">
+        <li class="up"></li>
+        {{each data v}}
+        <li><a href="./list.html?id={{v.id}}">{{v.name}}</a></li>
+        {{/each}}
+    </script>
+
+
+
+
+
     <!-- 导入模板引擎js文件 -->
     <script src="./js/template-web.js"></script>
     <!-- 引入jq文件 -->
     <script src="./js/jquery-1.12.4.min.js"></script>
+
+    <script>
+        //入口函数
+        $(function () {
+            //一: 热点图
+            $.ajax({
+                url: 'http://localhost:8080/api/v1/index/hotpic',
+                success: function (backData) {
+                    //console.log(backData);
+                    if (backData.code == 200) {
+                        var resHtml = template('hotpic_temp', backData);
+                        $('.focus_list').html(resHtml);
+                    }
+                }
+            });
+
+            //二: 最新资讯
+            $.ajax({
+                url: 'http://localhost:8080/api/v1/index/latest',
+                success: function (backData) {
+                    //console.log(backData);
+                    if (backData.code == 200) {
+                        var resHtml = template('latest_temp', backData);
+                        $('.common_news').html(resHtml);
+                    }
+                }
+            });
+
+            //三: 热门排行
+            $.ajax({
+                url: 'http://localhost:8080/api/v1/index/rank',
+                success: function (backData) {
+                    //console.log(backData);
+                    if (backData.code == 200) {
+                        //遍历数据
+                        //找到数据要渲染的标签,分别渲染上. 
+                        for (var i = 0; i < backData.data.length; i++) {
+                            $('.hotrank_list>li').eq(i).children('a').text(backData.data[i].title);
+                            $('.hotrank_list>li').eq(i).children('a').attr('href',
+                                './article.html?id=' + backData.data[i].id);
+                        }
+                    }
+                }
+            });
+
+
+            //四: 最新评论
+            $.ajax({
+                url: 'http://localhost:8080/api/v1/index/latest_comment',
+                success: function (backData) {
+                    var month = new Date().getMonth()+1; //当前的月份
+                    backData.month = month;//添加到backData数据中
+                    console.log(backData);
+                    var resHtml = template('latestcomment_temp',backData);
+                    $('.comment_list').html(resHtml);
+                }
+            });
+
+            //五: 焦点关注
+            $.ajax({
+                url:'http://localhost:8080/api/v1/index/attention',
+                success:function(backData){
+                    //console.log(backData);
+                    if(backData.code == 200){
+                        var resHtml = template('attention_temp',backData);
+                        $('.guanzhu_list').html(resHtml);
+                    }
+                }
+            })
+
+
+            //六: 获取所有的文章类型
+            $.ajax({
+                url:'http://localhost:8080/api/v1/index/category',
+                success:function(backData){
+                    //console.log(backData);
+                    if(backData.code == 200){
+                        var resHtml = template('category_temp',backData);
+                        $('.level_two').html(resHtml);;
+                    }
+                }
+            });
+
+
+        });
+    </script>
 </body>
 
 </html>

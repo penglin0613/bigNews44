@@ -12,6 +12,8 @@
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
     <script type="text/javascript" src="js/jquery.pagination.min.js"></script>
+    <!-- 导包template -->
+    <script src="./js/template-web.js"></script>
 </head>
 
 <body>
@@ -225,8 +227,60 @@
         <p>CopyRight © 2019 深圳大事件信息技术股份有限公司 All Rights Reserved</p>
         <p>电话：0755-****888 粤ICP备*******8号</p>
     </div>
-    <!-- 导包template -->
-    <script src="./js/template-web.js"></script>
+
+    <!-- 模板 -->
+    <script id="latest_temp" type="text/html">
+        <div class="list_title">
+            <h3>{{data.data[0].category}}</h3>
+        </div>
+        {{each data.data v}}
+        <div class="common_news_list">
+            <a href="./article.html?id={{v.id}}" class="list_pic"><img src="{{v.cover}}" alt=""></a>
+            <h4><a href="./article.html?id={{v.id}}">{{v.title}}</a></h4>
+            <p>{{@ v.intro}}
+            </p>
+            <div class="new_info">
+                <span>标签：{{v.category}}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<i class="fa fa-eye"></i>&nbsp;阅读(
+                    {{v.read}}
+                    )&nbsp;&nbsp;&nbsp;<i class="fa fa-commenting"></i>&nbsp;评论( {{v.comments}} )</span>
+                <b>发布于 {{v.date}}</b>
+            </div>
+        </div>
+        {{/each}}
+    </script>
+
+
+    
+
+    <script>
+        //入口函数
+        $(function(){
+            //1.获取通过url传递过来的文章类别id
+            var typeId = window.location.search.split('=')[1];
+
+            //2.根据id发送ajax请求获取文章
+            $.ajax({
+                url:'http://localhost:8080/api/v1/index/search',
+                data:{
+                    type:typeId
+                },
+                success:function(backData){
+                    console.log(backData);
+                    if(backData.code == 200){
+                        if(backData.data.data.length == 0){
+                            $('div.left_con').html("没有数据");
+                            return;
+                        }
+                        //3.通过模板引擎渲染到页面上. 
+                        var resHtml = template('latest_temp',backData);
+                        $('div.left_con').html($(resHtml));
+                    }
+                }
+
+            });
+            
+        });
+    </script>
 </body>
 
 </html>
